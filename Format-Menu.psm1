@@ -1,4 +1,4 @@
-Function FormatMenu {
+Function Format-Menu {
     <#
     .SYNOPSIS
     Display a Border
@@ -31,23 +31,23 @@ Function FormatMenu {
     Number of spaces to put after the separator
     .EXAMPLE
     A Top Bar
-    FormatMenu 1
+    Format-Menu 1
     ╔════╤═════════════════════════════════════════════════════════════════════════╗
 
     A Middle Bar
-    FormatMenu 2
+    Format-Menu 2
     ╠════╪═════════════════════════════════════════════════════════════════════════╣
 
     A Bottom Bar
-    FormatMenu 3
+    Format-Menu 3
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
 
     A Header
-    FormatMenu 4 "Hello World"
+    Format-Menu 4 "Hello World"
     ║    |Hello World                                                              ║
 
     A Array Menu
-    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
+    Format-Menu 5 -Arr $Array_Name -Col "Column Name"
     ║  1 │ Core                                                                    ║
     ║  2 │ Node_1                                                                  ║
     ║  3 │ Node_2                                                                  ║
@@ -56,11 +56,11 @@ Function FormatMenu {
     ║  6 │ Test-Device                                                             ║
 
     All together
-    FormatMenu 1
-    FormatMenu 4 "Hello World"
-    FormatMenu 2
-    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
-    FormatMenu 3
+    Format-Menu 1
+    Format-Menu 4 "Hello World"
+    Format-Menu 2
+    Format-Menu 5 -Arr $Array_Name -Col "Column Name"
+    Format-Menu 3
     ╔════╤═════════════════════════════════════════════════════════════════════════╗
     ║    |Hello World                                                              ║
     ╠════╪═════════════════════════════════════════════════════════════════════════╣
