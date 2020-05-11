@@ -1,4 +1,4 @@
-# FormatMenu
+# Format-Menu
 Menu framework for Powershell scripting
 
 Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
@@ -41,19 +41,19 @@ Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
 .EXAMPLE
 
     A Top Bar
-    FormatMenu 1
+    Format-Menu 1
     ╔════╤═════════════════════════════════════════════════════════════════════════╗
 
     A Middle Bar
-    FormatMenu 2
+    Format-Menu 2
     ╠════╪═════════════════════════════════════════════════════════════════════════╣
 
     A Bottom Bar
-    FormatMenu 3
+    Format-Menu 3
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
 
     A Header
-    FormatMenu 4 "Hello World"
+    Format-Menu 4 "Hello World"
     ║    |Hello World                                                              ║
     
     A Array Menu
