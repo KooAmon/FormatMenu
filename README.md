@@ -55,3 +55,29 @@ Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
     A Header
     FormatMenu 4 "Hello World"
     ║    |Hello World                                                              ║
+    
+    A Array Menu
+    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
+    ║  1 │ Core                                                                    ║
+    ║  2 │ Node_1                                                                  ║
+    ║  3 │ Node_2                                                                  ║
+    ║  4 │ Node_3                                                                  ║
+    ║  5 │ Node_4                                                                  ║
+    ║  6 │ Test-Device                                                             ║
+ 
+    All together
+    FormatMenu 1
+    FormatMenu 4 "Hello World"
+    FormatMenu 2
+    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
+    FormatMenu 3
+    ╔════╤═════════════════════════════════════════════════════════════════════════╗
+    ║    |Hello World                                                              ║
+    ╠════╪═════════════════════════════════════════════════════════════════════════╣
+    ║  1 │ Core                                                                    ║
+    ║  2 │ Node_1                                                                  ║
+    ║  3 │ Node_2                                                                  ║
+    ║  4 │ Node_3                                                                  ║
+    ║  5 │ Node_4                                                                  ║
+    ║  6 │ Test-Device                                                             ║
+    ╚════╧═════════════════════════════════════════════════════════════════════════╝
