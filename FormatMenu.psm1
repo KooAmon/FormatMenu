@@ -46,6 +46,31 @@ Function FormatMenu {
     FormatMenu 4 "Hello World"
     ║    |Hello World                                                              ║
 
+    A Array Menu
+    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
+    ║  1 │ Core                                                                    ║
+    ║  2 │ Node_1                                                                  ║
+    ║  3 │ Node_2                                                                  ║
+    ║  4 │ Node_3                                                                  ║
+    ║  5 │ Node_4                                                                  ║
+    ║  6 │ Test-Device                                                             ║
+
+    All together
+    FormatMenu 1
+    FormatMenu 4 "Hello World"
+    FormatMenu 2
+    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
+    FormatMenu 3
+    ╔════╤═════════════════════════════════════════════════════════════════════════╗
+    ║    |Hello World                                                              ║
+    ╠════╪═════════════════════════════════════════════════════════════════════════╣
+    ║  1 │ Core                                                                    ║
+    ║  2 │ Node_1                                                                  ║
+    ║  3 │ Node_2                                                                  ║
+    ║  4 │ Node_3                                                                  ║
+    ║  5 │ Node_4                                                                  ║
+    ║  6 │ Test-Device                                                             ║
+    ╚════╧═════════════════════════════════════════════════════════════════════════╝
     #>
     [CmdletBinding(ConfirmImpact='Low')]
     Param(
@@ -99,13 +124,6 @@ Function FormatMenu {
                         $MenuNumber = $i + $SkipLines
                         $Chars = ($Array[$i].$Column).length
                         $Chars = " " * (74 - $Chars - $CharsFront.Count - $CharsBack.count)
- #                        If ($MenuItem.contains("-") -eq $True) {
- #                            $Result = $MenuItem.substring(0, $MenuItem.lastindexofany("-"))
- #                            If ($Result -ne $Result2) {
- #                                $Result2 = $Result
- #                                Write-Host -ForegroundColor $BorderFG -BackgroundColor $BorderBG "$VHLBC$CharsFront$MMBC$CharsBack$VHRBC"
- #                            }
- #                        } 
                     	Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG $VBC -NoNewLine
                         If ($MenuNumber -lt 10) {
 	                        Write-Host -ForegroundColor $MenuFG -BackgroundColor $MenuBG "  $MenuNumber $VSBC $MenuItem$Chars" -NoNewLine
