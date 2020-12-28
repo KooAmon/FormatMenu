@@ -52,7 +52,7 @@ Function Format-Menu {
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
 
     A Header
-    Format-Menu 4 "Hello World"
+    Write-Host "Hello World"
     ║    |Hello World                                                              ║
 
     A Array Menu
@@ -66,7 +66,7 @@ Function Format-Menu {
 
     All together
     Format-Menu 1
-    Format-Menu 4 "Hello World"
+    Write-Host "Hello World"
     Format-Menu 2
     Format-Menu 5 -Arr $Array_Name -Col "Column Name"
     Format-Menu 3
@@ -81,18 +81,23 @@ Function Format-Menu {
     ║  6 │ Test-Device                                                             ║
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
     #>
-    [CmdletBinding(ConfirmImpact='Low')]
+    [CmdletBinding(ConfirmImpact='Low', DefaultParameterSetName = "Base")]
     Param(
-        [Parameter(Position = 1, Mandatory)][Int]$Type,
-        [Parameter(Position = 2)][String]$Header,
-        [Parameter()][Alias("BorderForeground")][Int]$BorderFG,
-        [Parameter()][Alias("BorderBackground")][Int]$BorderBG,
-        [Parameter()][Alias("MenuForeground")][Int]$MenuFG,
-        [Parameter()][Alias("MenuBackground")][Int]$MenuBG,
-        [Parameter(ParameterSetName = "Array")][Alias("Arr")][Array]$Array,
-        [Parameter(ParameterSetName = "Array")][Alias("Col")][String]$Column,
-        [Parameter(ParameterSetName = "Array")][Alias("Skip")][Int]$SkipLines = 1,
-        [Parameter()][String]$LineWidth = 80
+        [Parameter(ParameterSetName = "Base", Position = 1, Mandatory)]
+        [Parameter(ParameterSetName = "Header", Position = 1, Mandatory)]
+        [Parameter(ParameterSetName = "Item", Position = 1, Mandatory)]
+        [Parameter(ParameterSetName = "Array", Position = 1, Mandatory)][Int]$Type,
+        [Parameter(ParameterSetName = "Header", Position = 2, Mandatory)]
+        [Parameter(ParameterSetName = "Item", Position = 2, Mandatory)][String]$Header,
+        [Parameter(ParameterSetName = "Item", Mandatory)][Int]$MenuNumber,
+        [Parameter(ParameterSetName = "Base")][Alias("BorderForeground")][Int]$BorderFG = 7,
+        [Parameter(ParameterSetName = "Base")][Alias("BorderBackground")][Int]$BorderBG,
+        [Parameter(ParameterSetName = "Base")][Alias("MenuForeground")][Int]$MenuFG = 7,
+        [Parameter(ParameterSetName = "Base")][Alias("MenuBackground")][Int]$MenuBG,
+        [Parameter(ParameterSetName = "Base")][String]$LineWidth = 80,
+        [Parameter(ParameterSetName = "Array")][Alias("JSON")][Array]$Array,
+        [Parameter(ParameterSetName = "Array")][String]$Column,
+        [Parameter(ParameterSetName = "Array")][Int]$SkipLines = 1
     )
 
     #Variables used for "graphical" menu
@@ -119,7 +124,8 @@ Function Format-Menu {
         3 { Write-Host -ForegroundColor $BorderFG -BackgroundColor $BorderBG $BLBC$CharsFront$BMBC$CharsBack$BRBC }
         4 {
             if ( $Header -eq "" ) {
-                Format-Menu 4 "Error!   No Header" -MenuBG $MenuBG -MenuFG $MenuFG -BorderBG $BorderBG -BorderFG $BorderFG -LineWidth $LineWidth
+                Write-Host "Error!   No Header"
+                break
             }
             
             [string]$BackCharBuffer = " " * ( $BackBuffer - $Header.Length - 1 )
@@ -129,26 +135,47 @@ Function Format-Menu {
             Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG "$VBC"
         }
         5 {
-            if ( $Array.Count -lt 2 ) {
-                Format-Menu 4 "Error!   Missing Array Info" -MenuBG $MenuBG -MenuFG $MenuFG -BorderBG $BorderBG -BorderFG $BorderFG -LineWidth $LineWidth
+            if ( -NOT [bool]$Array.$Column ) {
+                Write-Host "Error!   Missing Array Info"
                 break
             } elseif ( [string]::IsNullOrEmpty($Column) ) {
-                Format-Menu 4 "Error!   Missing Column Info" -MenuBG $MenuBG -MenuFG $MenuFG -BorderBG $BorderBG -BorderFG $BorderFG -LineWidth $LineWidth
+                Write-Host "Error!   Missing Column Info"
                 break
             }
 
             for ($i=0;$i -le $Array.length - 1; $i++) {
-                $MenuItem = $Array[$i].$Column
-                $MenuNumber = $i + $SkipLines
-                $BackCharBuffer = " " * ($BackBuffer - ($Array[$i].$Column).length - 1 )
+                [string]$MenuItem = $Array[$i].$Column
+                [int]$MenuNumber = $i + $SkipLines
+                [string]$BackCharBuffer = " " * ($BackBuffer - ($Array[$i].$Column).length - 1 )
                 Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG $VBC -NoNewLine
                 if ( $MenuNumber -lt 10 ) {
                     Write-Host -ForegroundColor $MenuFG -BackgroundColor $MenuBG "  $MenuNumber $VSBC $MenuItem$BackCharBuffer" -NoNewLine
-                } else {
+                } elseif ( $MenuNumber -lt 100) {
                     Write-Host -ForegroundColor $MenuFG -BackgroundColor $MenuBG " $MenuNumber $VSBC $MenuItem$BackCharBuffer" -NoNewLine
+                } else {
+                    Write-Host -ForegroundColor $MenuFG -BackgroundColor $MenuBG "$MenuNumber $VSBC $MenuItem$BackCharBuffer" -NoNewLine
                 }
                 Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG $VBC
             }
+        }
+        6 {
+            if ( $Header -eq "" ) {
+                Write-Host "Error!   No Menu Item"
+                break
+            }
+            
+            [string]$BackCharBuffer = " " * ( $BackBuffer - $Header.Length - 1 )
+            if ( $MenuNumber -lt 10 ) {
+                [string]$FrontCharBuffer = " " * ( $FrontBuffer - 2 )
+            } elseif ( $MenuNumber -lt 100 ) {
+                [string]$FrontCharBuffer = " " * ( $FrontBuffer - 3 )
+            } else {
+                [string]$FrontCharBuffer = " " * ( $FrontBuffer - 4 )
+            }
+
+            Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG "$VBC$FrontCharBuffer$MenuNumber $VSBC" -NoNewLine
+            Write-Host -Foregroundcolor $MenuFG -BackgroundColor $MenuBG " $Header$BackCharBuffer" -NoNewLine
+            Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG "$VBC"
         }
     }
 }
