@@ -1,45 +1,59 @@
 # Format-Menu
+
 Menu framework for Powershell scripting
 
 Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
 
-.PARAMETER Type
-    Used to do differenciate between each type of entry
-    1 is Top
-    2 is Middle
-    3 is Bottom
-    4 is a Menu Header
-    5 is a Menu Array
+## .PARAMETERS
 
-.PARAMETER BorderFG
-    Color of the Foreground (0-16)
+### Type
 
-.PARAMETER BorderBG (0-16)
-    Color of the Background
+- Used to do differenciate between each type of entry
+- 1 is Top
+- 2 is Middle
+- 3 is Bottom
+- 4 is a Menu Header
+- 5 is a Menu Array
 
-.PARAMETER Header
-    One line Menu Header
+### BorderFG
 
-.PARAMETER HeaderNumber
-    Number of a Numbered parameter
+- Color of the Foreground (0-16)
 
-.PARAMETER Array
-    Array for creation of multiple lines with numbering
+### BorderBG (0-16)
 
-.PARAMETER Skiplines
-    How many numbers to skip when using an Array
+- Color of the Background
 
-.PARAMETER Column
-    What Column to use in the Array
+### Header
 
-.PARAMETER Front
-    Number of spaces to put before the separator
+- One line Menu Header
 
-.PARAMETER Back
-    Number of spaces to put after the separator
+### HeaderNumber
+
+- Number of a Numbered parameter
+
+### Array
+
+- Array for creation of multiple lines with numbering
+
+### Skiplines
+
+- How many numbers to skip when using an Array
+
+### Column
+
+- What Column to use in the Array
+
+### Front
+
+- Number of spaces to put before the separator
+
+### Back
+
+- Number of spaces to put after the separator
 
 .EXAMPLE
 
+```Powershell
     A Top Bar
     Format-Menu 1
     ╔════╤═════════════════════════════════════════════════════════════════════════╗
@@ -81,3 +95,4 @@ Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
     ║  5 │ Node_4                                                                  ║
     ║  6 │ Test-Device                                                             ║
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
+```
