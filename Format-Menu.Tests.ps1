@@ -35,7 +35,7 @@ Describe "Format-Menu" {
         }
     }
 
-    Context "Accepts Single Item Input" {
+    Context "Single Item Input" {
         It "Displays a Header" {
             Mock Write-Host {}
             Format-Menu 4 "Hello World"
@@ -45,7 +45,7 @@ Describe "Format-Menu" {
             Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "║" }
         }
 
-        It "Displays a Menu Item" {
+        It "Displays a Menu Number" {
             Mock Write-Host {}
             Format-Menu 6 "Hello World" -MenuNumber 0
             Should -Invoke Write-Host -Exactly 3 -Scope It
@@ -53,9 +53,7 @@ Describe "Format-Menu" {
             Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq " Hello World                                                             " }
             Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "║" }
         }
-    }
 
-    Context "Errors Single Item Input" {
         It "Errors on No Header Given" {
             Mock Write-Host {}
             Format-Menu 4
@@ -71,7 +69,7 @@ Describe "Format-Menu" {
         }
     }
 
-    Context "Accepts Input Objects" {
+    Context "Input Objects" {
         It "Accepts Arrays" {
             Mock Write-Host {}
             $Array = Import-Csv .\TestArray.csv
@@ -93,10 +91,21 @@ Describe "Format-Menu" {
             Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -contains "  2 │ Sam                                                                     " }
             Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -contains "  3 │ Fiona                                                                   " }
         }
-    }
 
-    Context "Errors Input Objects" {
+        It "Errors on Missing Arrays" {
+            Mock Write-Host {}
+            Format-Menu 5
+            Should -Invoke Write-Host -Exactly 1 -Scope It
+            Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "Error!   Missing Array Info" }
+        }
 
+        It "Errors on Missing JSON" {
+            Mock Write-Host {}
+            $JSON = (@{}) | ConvertTo-Json | ConvertFrom-Json
+            Format-Menu 5 -JSON $JSON
+            Should -Invoke Write-Host -Exactly 1 -Scope It
+            Should -Invoke Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "Error!   Missing Array Info" }
+        }
     }
 }
 

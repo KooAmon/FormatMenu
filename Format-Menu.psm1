@@ -89,7 +89,7 @@ Function Format-Menu {
         [Parameter(ParameterSetName = "Array", Position = 1, Mandatory)][Int]$Type,
         [Parameter(ParameterSetName = "Header", Position = 2, Mandatory)]
         [Parameter(ParameterSetName = "Item", Position = 2, Mandatory)][String]$Header,
-        [Parameter(ParameterSetName = "Item", Mandatory)][Int]$MenuNumber,
+        [Parameter(ParameterSetName = "Item", Mandatory)][System.Nullable[[System.Int32]]]$MenuNumber = $NULL,
         [Parameter(ParameterSetName = "Base")][Alias("BorderForeground")][Int]$BorderFG = 7,
         [Parameter(ParameterSetName = "Base")][Alias("BorderBackground")][Int]$BorderBG,
         [Parameter(ParameterSetName = "Base")][Alias("MenuForeground")][Int]$MenuFG = 7,
@@ -135,10 +135,10 @@ Function Format-Menu {
             Write-Host -Foregroundcolor $BorderFG -BackgroundColor $BorderBG "$VBC"
         }
         5 {
-            if ( -NOT [bool]$Array.$Column ) {
+            if ( -NOT $MyInvocation.BoundParameters.ContainsKey("Array") -OR -NOT [bool]$Array.$Column ) {
                 Write-Host "Error!   Missing Array Info"
                 break
-            } elseif ( [string]::IsNullOrEmpty($Column) ) {
+            } elseif ( -NOT $MyInvocation.BoundParameters.ContainsKey("Column") ) {
                 Write-Host "Error!   Missing Column Info"
                 break
             }
@@ -159,11 +159,10 @@ Function Format-Menu {
             }
         }
         6 {
-            if ( $Header -eq "" ) {
+            if ( -NOT $MyInvocation.BoundParameters.ContainsKey("MenuNumber")) {
                 Write-Host "Error!   No Menu Item"
                 break
             }
-            
             [string]$BackCharBuffer = " " * ( $BackBuffer - $Header.Length - 1 )
             if ( $MenuNumber -lt 10 ) {
                 [string]$FrontCharBuffer = " " * ( $FrontBuffer - 2 )
