@@ -1,4 +1,56 @@
 Function Format-Menu {
+    <#
+    .SYNOPSIS
+    Display a Menu
+
+    .DESCRIPTION
+    Displays a Simple Menu built from a JSON Object and returns the index the user selects
+    
+    .PARAMETER InputJSON
+    The JSON object used to create the Menu.  The object should be built as follows.
+
+    Required Objects
+    - Header:  DataType String.  This is the Header that will be displayed at the top of the Menu.
+    - MenuItems: DataType Array of Strings. This array will be parsed as the options displayed in the Menu.  Numbering will be given in a top down order starting from 0.
+    
+    Optional Objects
+    - LineWidth: DataType Int. This is the width of the Menu.  The default of 80 will be set if omitted.
+    - Colors: DataType Array of Objects.  This holds the Menu and Border color selections.
+    - BorderBackground: DataType Int.  This will be the Border Background Color.  The default of 0 will be set if omitted.
+    - BorderForeground: DataType Int.  This will be the Border Foreground Color.  The default of 6 will be set if omitted.
+    - MenuBackground: DataType Int.  This will be the Menu Background Color.  The default of 0 will be set if omitted.
+    - MenuForeground: DataType Int.  This will be the Menu Foreground Color.  The default of 10 will be set if omitted.
+
+    Example JSON Object
+
+    {
+        "Header": "Test Menu",
+        "LineWidth": 80,
+        "Colors": {
+            "MenuBackground": 0,
+            "MenuForeground": 10,
+            "BorderBackground": 0,
+            "BorderForeground": 6
+        },
+        "MenuItems": [
+            "Option 1",
+            "Option 2",
+            "Option 3"
+        ]
+    }
+
+    .EXAMPLE
+    $JSON = Get-Content .\Test\TestInput.json
+    Format-Menu -InputObject $JSON
+    
+    ╔════╤═════════════════════════════════════════════════════════════════════════╗
+    ║    │Test Menu                                                                ║
+    ╠════╪═════════════════════════════════════════════════════════════════════════╣
+    ║  0 │ Option 1                                                                ║
+    ║  1 │ Option 2                                                                ║
+    ║  2 │ Option 3                                                                ║
+    ╚════╧═════════════════════════════════════════════════════════════════════════╝
+    #>
     [CmdletBinding(ConfirmImpact='Low')]
     Param(
         [Parameter(Position = 1, Mandatory)][Array]$InputJSON
@@ -22,9 +74,7 @@ Function Format-Menu {
     Function Draw-Menu {
         Clear-Host
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
-    
         Draw-Header -Header $JSON.Header
-    
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
     
         ForEach ($MenuItem in $JSON.MenuItems) {
@@ -32,7 +82,6 @@ Function Format-Menu {
         }
     
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $BLBC$CharsFront$BMBC$CharsBack$BRBC
-    
         return Read-Host "Select an Item"
     }
 
@@ -77,9 +126,14 @@ Function Format-Menu {
     [string]$VSBC = [String][Char]9474          #Vertical Single Bar
 
     [int]$BorderBg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderBackground" ) { $JSON.Colors.BorderBackground } else { 0 }
-    [int]$BorderFg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderForeground" ) { $JSON.Colors.BorderForeground } else { 8 }
+    [int]$BorderFg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderForeground" ) { $JSON.Colors.BorderForeground } else { 6 }
     [int]$MenuBg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuBackground" ) { $JSON.Colors.MenuBackground } else { 0 }
-    [int]$MenuFg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuForeground" ) { $JSON.Colors.MenuForeground } else { 8 }
+    [int]$MenuFg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuForeground" ) { $JSON.Colors.MenuForeground } else { 10 }
+
+    Write-Host "BorderBG: $BorderBG"
+    Write-Host "BorderFG: $BorderFG"
+    Write-Host "MenuBG: $MenuBG"
+    Write-Host "MenuFG: $MenuFG"
 
     #Setup spacing based on Menu length and LineWidth
     [Int]$FrontBuffer = ($JSON.MenuItems.Count).ToString().length + 2

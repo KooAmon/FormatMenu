@@ -2,10 +2,10 @@
     "Header": "Test Menu",
     "LineWidth": 80,
     "Colors": {
-        "MenuBackground": 5,
-        "MenuForeground": 11,
-        "BorderBackground": 7,
-        "BorderForeground": 2
+        "MenuBackground": 0,
+        "MenuForeground": 10,
+        "BorderBackground": 0,
+        "BorderForeground": 6
     },
     "MenuItems": [
         "Option 1",

@@ -2,97 +2,57 @@
 
 Menu framework for Powershell scripting
 
-Displays a Top, Middle, Bottom Border, Menu Header, or a Menu Item
+Displays a Simple Menu built from a JSON Object and returns the index the user selects
 
 ## .PARAMETERS
 
-### Type
+### InputJSON
 
-- Used to do differenciate between each type of entry
-- 1 is Top
-- 2 is Middle
-- 3 is Bottom
-- 4 is a Menu Header
-- 5 is a Menu Array
+The JSON object used to create the Menu.  The object should be built as follows.
 
-### BorderFG
+#### Required Objects
 
-- Color of the Foreground (0-16)
+- Header:  DataType String.  This is the Header that will be displayed at the top of the Menu.
+- MenuItems: DataType Array of Strings. This array will be parsed as the options displayed in the Menu.  Numbering will be given in a top down order starting from 0.
 
-### BorderBG (0-16)
+#### Optional Objects
 
-- Color of the Background
+- LineWidth: DataType Int. This is the width of the Menu.  The default of 80 will be set if omitted.
+- Colors: DataType Array of Objects.  This holds the Menu and Border color selections.
+- BorderBackground: DataType Int.  This will be the Border Background Color.  The default of 0 will be set if omitted.
+- BorderForeground: DataType Int.  This will be the Border Foreground Color.  The default of 6 will be set if omitted.
+- MenuBackground: DataType Int.  This will be the Menu Background Color.  The default of 0 will be set if omitted.
+- MenuForeground: DataType Int.  This will be the Menu Foreground Color.  The default of 10 will be set if omitted.
 
-### Header
+### Example JSON Object
 
-- One line Menu Header
+{
+    "Header": "Test Menu",
+    "LineWidth": 80,
+    "Colors": {
+        "MenuBackground": 0,
+        "MenuForeground": 10,
+        "BorderBackground": 0,
+        "BorderForeground": 6
+    },
+    "MenuItems": [
+        "Option 1",
+        "Option 2",
+        "Option 3"
+    ]
+}
 
-### HeaderNumber
-
-- Number of a Numbered parameter
-
-### Array
-
-- Array for creation of multiple lines with numbering
-
-### Skiplines
-
-- How many numbers to skip when using an Array
-
-### Column
-
-- What Column to use in the Array
-
-### Front
-
-- Number of spaces to put before the separator
-
-### Back
-
-- Number of spaces to put after the separator
-
-.EXAMPLE
+### Example use
 
 ```Powershell
-    A Top Bar
-    Format-Menu 1
-    ╔════╤═════════════════════════════════════════════════════════════════════════╗
+$JSON = Get-Content .\Test\TestInput.json
+Format-Menu -InputObject $JSON
 
-    A Middle Bar
-    Format-Menu 2
-    ╠════╪═════════════════════════════════════════════════════════════════════════╣
-
-    A Bottom Bar
-    Format-Menu 3
-    ╚════╧═════════════════════════════════════════════════════════════════════════╝
-
-    A Header
-    Format-Menu 4 "Hello World"
-    ║    |Hello World                                                              ║
-    
-    A Array Menu
-    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
-    ║  1 │ Core                                                                    ║
-    ║  2 │ Node_1                                                                  ║
-    ║  3 │ Node_2                                                                  ║
-    ║  4 │ Node_3                                                                  ║
-    ║  5 │ Node_4                                                                  ║
-    ║  6 │ Test-Device                                                             ║
- 
-    All together
-    FormatMenu 1
-    FormatMenu 4 "Hello World"
-    FormatMenu 2
-    FormatMenu 5 -Arr $Array_Name -Col "Column Name"
-    FormatMenu 3
-    ╔════╤═════════════════════════════════════════════════════════════════════════╗
-    ║    |Hello World                                                              ║
-    ╠════╪═════════════════════════════════════════════════════════════════════════╣
-    ║  1 │ Core                                                                    ║
-    ║  2 │ Node_1                                                                  ║
-    ║  3 │ Node_2                                                                  ║
-    ║  4 │ Node_3                                                                  ║
-    ║  5 │ Node_4                                                                  ║
-    ║  6 │ Test-Device                                                             ║
-    ╚════╧═════════════════════════════════════════════════════════════════════════╝
+╔════╤═════════════════════════════════════════════════════════════════════════╗
+║    │Test Menu                                                                ║
+╠════╪═════════════════════════════════════════════════════════════════════════╣
+║  0 │ Option 1                                                                ║
+║  1 │ Option 2                                                                ║
+║  2 │ Option 3                                                                ║
+╚════╧═════════════════════════════════════════════════════════════════════════╝
 ```
