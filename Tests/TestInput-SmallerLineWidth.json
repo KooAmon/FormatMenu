@@ -1,0 +1,13 @@
+{
+    "Header": "Test Menu",
+    "LineWidth": 40,
+    "Colors": {
+        "MenuBackground": 0,
+        "MenuForeground": 10,
+        "BorderBackground": 0,
+        "BorderForeground": 7
+    },
+    "MenuItems": [
+        "Option 1"
+    ]
+}
