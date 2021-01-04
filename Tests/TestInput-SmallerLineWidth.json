@@ -5,7 +5,7 @@
         "MenuBackground": 0,
         "MenuForeground": 10,
         "BorderBackground": 0,
-        "BorderForeground": 7
+        "BorderForeground": 2
     },
     "MenuItems": [
         "Option 1"

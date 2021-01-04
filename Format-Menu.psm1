@@ -72,7 +72,7 @@ Function Format-Menu {
     }
 
     Function Write-Menu {
-        Clear-Host
+        #Clear-Host
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
         Write-Header -Header $JSON.Header
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
@@ -112,7 +112,7 @@ Function Format-Menu {
 
     Function Main {
         [PSCustomObject]$JSON = $InputJSON | ConvertFrom-Json
-        if ( -NOT (Confirm-JSON)) { break }
+        if ( -NOT (Confirm-JSON)) { exit }
 
         #Variables used for "graphical" menu
         [string]$HBC = [String][Char]9552           #Horizontal Double Bar
@@ -129,7 +129,7 @@ Function Format-Menu {
         [string]$VSBC = [String][Char]9474          #Vertical Single Bar
 
         [int]$BorderBg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderBackground" ) { $JSON.Colors.BorderBackground } else { 0 }
-        [int]$BorderFg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderForeground" ) { $JSON.Colors.BorderForeground } else { 6 }
+        [int]$BorderFg = if ( $JSON.Colors.PSObject.Properties.name -match "BorderForeground" ) { $JSON.Colors.BorderForeground } else { 2 }
         [int]$MenuBg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuBackground" ) { $JSON.Colors.MenuBackground } else { 0 }
         [int]$MenuFg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuForeground" ) { $JSON.Colors.MenuForeground } else { 10 }
 
