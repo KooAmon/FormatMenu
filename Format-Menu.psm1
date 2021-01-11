@@ -141,6 +141,12 @@ Function Format-Menu {
         
         do {
             $UserInput = Write-Menu
+            Try {
+                $UserInput = $UserInput.ToInt32($null)
+            }
+            catch {
+                $UserInput = -1
+            }
         } until (($UserInput -ge 0) -AND ($UserInput -le $JSON.MenuItems.Count - 1))
         return $UserInput
     }
