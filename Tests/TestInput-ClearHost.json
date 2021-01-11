@@ -1,0 +1,14 @@
+{
+    "Header": "Test Menu",
+    "LineWidth": 80,
+    "ClearScreen" : true,
+    "Colors": {
+        "MenuBackground": 0,
+        "MenuForeground": 10,
+        "BorderBackground": 0,
+        "BorderForeground": 2
+    },
+    "MenuItems": [
+        "Option 1"
+    ]
+}

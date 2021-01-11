@@ -57,22 +57,26 @@ Function Format-Menu {
     )
 
     Function Confirm-JSON {
-        if ( -NOT ($JSON.PSObject.Properties.name -match "Header" )) {
+        if ( -NOT ($JSON.PSObject.Properties.name.Contains("Header") )) {
             Write-Host "Error - Missing Header!"
             return $false
         }
-        if ( -NOT ($JSON.PSObject.Properties.name -match "MenuItems" )) {
+        if ( -NOT ($JSON.PSObject.Properties.name.Contains("MenuItems") )) {
             Write-Host "Error - Missing Menu Items!"
             return $false
         }
-        if ( -NOT ($JSON.PSObject.Properties.name -match "LineWidth" )) {
+        if ( -NOT ($JSON.PSObject.Properties.name.Contains("LineWidth") )) {
             Add-Member -InputObject $JSON -NotePropertyName LineWidth -NotePropertyValue 80
+        }
+        if ( -NOT ($JSON.PSObject.Properties.name.Contains("ClearScreen") )) {
+            Add-Member -InputObject $JSON -NotePropertyName ClearScreen -NotePropertyValue $false
         }
         return $true
     }
 
     Function Write-Menu {
-        #Clear-Host
+
+        Clear-Screen
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
         Write-Header -Header $JSON.Header
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
@@ -108,6 +112,12 @@ Function Format-Menu {
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VSBC -NoNewLine
         Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg " $Item$BackCharBuffer" -NoNewLine
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VBC
+    }
+
+    Function Clear-Screen {
+        if ($JSON.ClearScreen) {
+            Clear-Host
+        }
     }
 
     Function Main {
