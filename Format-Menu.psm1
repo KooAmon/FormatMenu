@@ -57,36 +57,36 @@ Function Format-Menu {
     )
 
     Function Confirm-JSON {
-        if ( -NOT ($JSON.PSObject.Properties.name.Contains("Header") )) {
+        if ( -NOT ($JSON.PSObject.Properties.name -match "Header" )) {
             Write-Host "Error - Missing Header!"
             return $false
         }
-        if ( -NOT ($JSON.PSObject.Properties.name.Contains("MenuItems") )) {
+        if ( -NOT ($JSON.PSObject.Properties.name -match "MenuItems" )) {
             Write-Host "Error - Missing Menu Items!"
             return $false
         }
-        if ( -NOT ($JSON.PSObject.Properties.name.Contains("LineWidth") )) {
+        if ( -NOT ($JSON.PSObject.Properties.name -match "LineWidth" )) {
             Add-Member -InputObject $JSON -NotePropertyName LineWidth -NotePropertyValue 80
-        }
-        if ( -NOT ($JSON.PSObject.Properties.name.Contains("ClearScreen") )) {
-            Add-Member -InputObject $JSON -NotePropertyName ClearScreen -NotePropertyValue $false
         }
         return $true
     }
 
     Function Write-Menu {
-
         Clear-Screen
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
         Write-Header -Header $JSON.Header
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
-    
-        ForEach ($MenuItem in $JSON.MenuItems) {
-            Write-MenuItem -Item $MenuItem -Index $JSON.MenuItems.Indexof($MenuItem)
-        }
+
+        $i = 0
+        $JSON.MenuItems.PSObject.Properties.Foreach({
+            Write-MenuItem -Item $_.Name -Index $i
+            $i++
+        })
     
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $BLBC$CharsFront$BMBC$CharsBack$BRBC
-        return Read-Host "Select an Item"
+
+        [int]$UserInput = Read-Host "Select Item"
+        return $JSON.MenuItems.PSObject.Properties.Value[$UserInput]
     }
 
     Function Write-Header {
@@ -114,13 +114,12 @@ Function Format-Menu {
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VBC
     }
 
-    Function Clear-Screen {
-        if ($JSON.ClearScreen) {
-            Clear-Host
-        }
+    Function Clear-Screen{
+        If($JSON.ClearScreen){Clear-Host}
     }
 
     Function Main {
+        #[OutputType([Int])]
         [PSCustomObject]$JSON = $InputJSON | ConvertFrom-Json
         if ( -NOT (Confirm-JSON)) { exit }
 
@@ -144,21 +143,14 @@ Function Format-Menu {
         [int]$MenuFg = if ( $JSON.Colors.PSObject.Properties.name -match "MenuForeground" ) { $JSON.Colors.MenuForeground } else { 10 }
 
         #Setup spacing based on Menu length and LineWidth
-        [Int]$FrontBuffer = ($JSON.MenuItems.Count).ToString().length + 2
+        $Items = -1
+        ForEach($Item in $JSON.MenuItems.PSObject.Properties) {$Items++}
+        [Int]$FrontBuffer = ($Items).ToString().length + 2
         [Int]$BackBuffer = $JSON.LineWidth - $FrontBuffer - 3
         [string]$CharsFront = $HBC * $FrontBuffer
         [string]$CharsBack = $HBC * $BackBuffer
         
-        do {
-            $UserInput = Write-Menu
-            Try {
-                $UserInput = $UserInput.ToInt32($null)
-            }
-            catch {
-                $UserInput = -1
-            }
-        } until (($UserInput -ge 0) -AND ($UserInput -le $JSON.MenuItems.Count - 1))
-        return $UserInput
+        return Write-Menu
     }
     Main
 }
