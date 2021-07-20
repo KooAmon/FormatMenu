@@ -106,7 +106,12 @@ Function Format-Menu {
             [Parameter(Position = 2, Mandatory)][Int]$Index
         )
         [string]$FrontCharBuffer = " " * ($FrontBuffer - $Index.ToString().Length - 1)
-        [string]$BackCharBuffer = " " * ($BackBuffer - $Item.length - 1 )
+        if($Item.Length -gt ($JSON.LineWidth - ($FrontCharBuffer.Length + 3))){
+            [string]$BackCharBuffer = " "
+            $Item = $Item.Substring(0,$JSON.LineWidth - ($FrontCharBuffer.Length + 4))
+        } else {
+            [string]$BackCharBuffer = " " * ($BackBuffer - $Item.length - 1 )            
+        }
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VBC -NoNewLine
         Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg "$FrontCharBuffer$Index " -NoNewLine 
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VSBC -NoNewLine
