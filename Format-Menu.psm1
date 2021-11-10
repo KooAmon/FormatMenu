@@ -72,7 +72,7 @@ Function Format-Menu {
     }
 
     Function Write-Menu {
-        Clear-Screen
+        Clear-Screen      
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
         Write-Header -Header $JSON.Header
         Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
@@ -87,6 +87,62 @@ Function Format-Menu {
 
         [int]$UserInput = Read-Host "Select Item"
         return $JSON.MenuItems.PSObject.Properties.Value[$UserInput]
+    }
+
+    Function Write-InteractiveMenu (){
+        $MenuOptions = [System.Collections.ArrayList]::new()
+        $JSON.MenuItems.PSObject.Properties.Foreach({$MenuOptions.Add($_.Name)})
+        $MaxValue = $MenuOptions.count-1
+        $Selection = 0
+        $EnterPressed = $False
+        
+        Clear-Screen
+    
+        While($EnterPressed -eq $False){
+            #Write-Host $JSON.Header
+            Clear-Screen
+            Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
+            Write-Header -Header $JSON.Header
+            Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $VHLBC$CharsFront$MMBC$CharsBack$VHRBC
+
+            For ($i=0; $i -le $MaxValue; $i++){
+                
+                If ($i -eq $Selection){
+                    #Write-Host -BackgroundColor Cyan -ForegroundColor Black "[ $($MenuOptions[$i]) ]"
+                    $HighlightedItem = "$($MenuOptions[$i]) <-"
+                    Write-MenuItem -Item $HighlightedItem -Index $i
+                } Else {
+                    #Write-Host "  $($MenuOptions[$i])  "
+                    Write-MenuItem -Item $MenuOptions[$i] -Index $i
+                }
+    
+            }
+
+            Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $BLBC$CharsFront$BMBC$CharsBack$BRB
+            Write-Host "Use up and down arrow keys to select and then press Enter"
+            
+            $KeyInput = $host.ui.rawui.readkey("NoEcho,IncludeKeyDown").virtualkeycode
+            Switch($KeyInput){
+                13 { $EnterPressed = $True }
+                38{
+                    If ($Selection -eq 0){
+                        $Selection = $MaxValue
+                    } Else {
+                        $Selection -= 1
+                    }
+                }
+    
+                40{
+                    If ($Selection -eq $MaxValue){
+                        $Selection = 0
+                    } Else {
+                        $Selection += 1
+                    }
+                }
+                Default {}
+            }
+        }
+        return $Selection
     }
 
     Function Write-Header {
@@ -120,7 +176,11 @@ Function Format-Menu {
     }
 
     Function Clear-Screen{
-        If($JSON.ClearScreen){Clear-Host}
+        If($JSON.Interactive){
+            Clear-Host
+        } elseif ($JSON.ClearScreen) {
+            Clear-Host
+        }
     }
 
     Function Main {
@@ -154,8 +214,16 @@ Function Format-Menu {
         [Int]$BackBuffer = $JSON.LineWidth - $FrontBuffer - 3
         [string]$CharsFront = $HBC * $FrontBuffer
         [string]$CharsBack = $HBC * $BackBuffer
-        
-        return Write-Menu
+
+        If ($JSON.Interactive){
+            $UserInput = Write-InteractiveMenu
+            #   ToDo: Fix RealizedInput
+            $RealizedInput = $UserInput[$UserInput.Length -1]
+            Write-Host $JSON.MenuItems.PSObject.Properties.Value[$RealizedInput]
+            return $JSON.MenuItems.PSObject.Properties.Value[$RealizedInput]
+        } else {
+            return Write-Menu
+        }
     }
     Main
 }
