@@ -99,7 +99,6 @@ Function Format-Menu {
         Clear-Screen
     
         While($EnterPressed -eq $False){
-            #Write-Host $JSON.Header
             Clear-Screen
             Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $TLBC$CharsFront$TMBC$CharsBack$TRBC
             Write-Header -Header $JSON.Header
@@ -108,38 +107,33 @@ Function Format-Menu {
             For ($i=0; $i -le $MaxValue; $i++){
                 
                 If ($i -eq $Selection){
-                    #Write-Host -BackgroundColor Cyan -ForegroundColor Black "[ $($MenuOptions[$i]) ]"
-                    $HighlightedItem = "$($MenuOptions[$i]) <-"
-                    Write-MenuItem -Item $HighlightedItem -Index $i
+                    Write-MenuItem -Item $MenuOptions[$i] -Index $i -HighlightedItem
                 } Else {
-                    #Write-Host "  $($MenuOptions[$i])  "
                     Write-MenuItem -Item $MenuOptions[$i] -Index $i
                 }
-    
             }
 
             Write-Host -ForegroundColor $BorderFg -BackgroundColor $BorderBg $BLBC$CharsFront$BMBC$CharsBack$BRB
             Write-Host "Use up and down arrow keys to select and then press Enter"
             
             $KeyInput = $host.ui.rawui.readkey("NoEcho,IncludeKeyDown").virtualkeycode
-            Switch($KeyInput){
-                13 { $EnterPressed = $True }
-                38{
-                    If ($Selection -eq 0){
-                        $Selection = $MaxValue
-                    } Else {
-                        $Selection -= 1
-                    }
-                }
-    
-                40{
-                    If ($Selection -eq $MaxValue){
-                        $Selection = 0
-                    } Else {
-                        $Selection += 1
-                    }
-                }
+            Switch($KeyInput){                                 #   https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+                13 { $EnterPressed = $True }                   #   Enter
+                38 { $NewSelection = $Selection - 1 }          #   Up Arrow
+                87 { $NewSelection = $Selection - 1 }          #   W
+                104 { $NewSelection = $Selection - 1 }         #   NumPad 8 (Up Arrow)
+                40 { $NewSelection = $Selection + 1 }          #   Down Arrow
+                83 { $NewSelection = $Selection + 1 }          #   S
+                98 { $NewSelection = $Selection + 1 }          #   NumPad 2 (Down Arrow)
                 Default {}
+            }
+
+            If ($NewSelection -lt 0) {
+                $Selection = $MaxValue
+            } elseif ($NewSelection -gt $MaxValue) {
+                $Selection = 0
+            } else {
+                $Selection = $NewSelection
             }
         }
         return $Selection
@@ -159,17 +153,31 @@ Function Format-Menu {
     Function Write-MenuItem {
         Param(
             [Parameter(Position = 1, Mandatory)][String]$Item,
-            [Parameter(Position = 2, Mandatory)][Int]$Index
+            [Parameter(Position = 2, Mandatory)][Int]$Index,
+            [Parameter()][switch]$HighlightedItem
         )
-        [string]$FrontCharBuffer = " " * ($FrontBuffer - $Index.ToString().Length - 1)
+
+        If ($HighlightedItem.IsPresent){
+            $FrontChar = ">"
+        } else {
+            $FrontChar = " "
+        }
+        [string]$FrontCharBuffer = $FrontChar * ($FrontBuffer - $Index.ToString().Length - 1)
         if($Item.Length -gt ($JSON.LineWidth - ($FrontCharBuffer.Length + 3))){
             [string]$BackCharBuffer = " "
             $Item = $Item.Substring(0,$JSON.LineWidth - ($FrontCharBuffer.Length + 4))
         } else {
             [string]$BackCharBuffer = " " * ($BackBuffer - $Item.length - 1 )            
         }
+
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VBC -NoNewLine
-        Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg "$FrontCharBuffer$Index " -NoNewLine 
+
+        If ($JSON.Interactive) {
+            Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg "$FrontCharBuffer  " -NoNewLine
+        } else {
+            Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg "$FrontCharBuffer$Index " -NoNewLine 
+        }
+
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VSBC -NoNewLine
         Write-Host -ForegroundColor $MenuFg -BackgroundColor $MenuBg " $Item$BackCharBuffer" -NoNewLine
         Write-Host -Foregroundcolor $BorderFg -BackgroundColor $BorderBg $VBC
