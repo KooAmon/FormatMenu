@@ -20,9 +20,10 @@ Function Format-Menu {
     - BorderForeground: DataType Int.  This will be the Border Foreground Color.  The default of 6 will be set if omitted.
     - MenuBackground: DataType Int.  This will be the Menu Background Color.  The default of 0 will be set if omitted.
     - MenuForeground: DataType Int.  This will be the Menu Foreground Color.  The default of 10 will be set if omitted.
+    - Interactive: DataType bool.  This will remove the Index numbers and display an arrow.  The arrow can be moved by arrows and enter used to select
 
+    .EXAMPLE
     Example JSON Object
-
     {
         "Header": "Test Menu",
         "LineWidth": 80,
@@ -39,7 +40,6 @@ Function Format-Menu {
         ]
     }
 
-    .EXAMPLE
     $JSON = Get-Content .\Test\TestInput.json
     Format-Menu -InputObject $JSON
     
@@ -49,6 +49,35 @@ Function Format-Menu {
     ║  0 │ Option 1                                                                ║
     ║  1 │ Option 2                                                                ║
     ║  2 │ Option 3                                                                ║
+    ╚════╧═════════════════════════════════════════════════════════════════════════╝
+
+    .EXAMPLE
+    Example JSON Object
+    {
+        "Header": "Test Menu",
+        "LineWidth": 80,
+        "Interactive": true,
+        "Colors": {
+            "MenuBackground": 0,
+            "MenuForeground": 10,
+            "BorderBackground": 0,
+            "BorderForeground": 6
+        },
+        "MenuItems": [
+            "Option 1",
+            "Option 2",
+            "Option 3"
+        ]
+    }
+    $JSON = Get-Content .\Test\TestInput.json
+    Format-Menu -InputObject $JSON
+
+    ╔════╤═════════════════════════════════════════════════════════════════════════╗
+    ║    │Test Menu                                                                ║
+    ╠════╪═════════════════════════════════════════════════════════════════════════╣
+    ║ >  │ Option 1                                                                ║
+    ║    │ Option 2                                                                ║
+    ║    │ Option 3                                                                ║
     ╚════╧═════════════════════════════════════════════════════════════════════════╝
     #>
     [CmdletBinding(ConfirmImpact='Low')]
