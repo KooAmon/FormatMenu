@@ -23,7 +23,7 @@ The JSON object used to create the Menu.  The object should be built as follows.
 - BorderForeground: DataType Int.  This will be the Border Foreground Color.  The default of 6 will be set if omitted.
 - MenuBackground: DataType Int.  This will be the Menu Background Color.  The default of 0 will be set if omitted.
 - MenuForeground: DataType Int.  This will be the Menu Foreground Color.  The default of 10 will be set if omitted.
-
+- Interactive: DataType bool.  This will remove the Index numbers and display an arrow.  The arrow can be moved by arrows and enter used to select
 ### Example JSON Object
 
 {
@@ -54,5 +54,20 @@ Format-Menu -InputObject $JSON
 ║  0 │ Option 1                                                                ║
 ║  1 │ Option 2                                                                ║
 ║  2 │ Option 3                                                                ║
+╚════╧═════════════════════════════════════════════════════════════════════════╝
+```
+
+### Example Interactive use
+
+```Powershell
+$JSON = Get-Content .\Test\TestInput.json
+Format-Menu -InputObject $JSON
+
+╔════╤═════════════════════════════════════════════════════════════════════════╗
+║    │Test Menu                                                                ║
+╠════╪═════════════════════════════════════════════════════════════════════════╣
+║ >  │ Option 1                                                                ║
+║    │ Option 2                                                                ║
+║    │ Option 3                                                                ║
 ╚════╧═════════════════════════════════════════════════════════════════════════╝
 ```
